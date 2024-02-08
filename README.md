@@ -1,2 +1,2 @@
 # library_project
-Personal Library App Projject
+Personal Library App Project
