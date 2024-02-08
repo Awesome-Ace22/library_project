@@ -1,0 +1,129 @@
+# swagger.yml
+
+openapi: 3.0.0
+info:
+  title: "Flask REST API"
+  description: "An API for book details"
+  version: "1.0.0"
+
+servers:
+  - url: /api
+
+components:
+  schemas:
+    Book:
+      type: "object"
+      required:
+        - isbn
+      properties:
+        title:
+          type: "string"
+        isbn:
+          type: "string"
+        authors:
+          type: "string"
+    BookDetails:
+      type: "object"
+      properties:
+        publisher:
+          type: "string"
+        publishedDate:
+          type: "string"
+        description:
+          type: "string"
+        thumbnail:
+          type: "string"
+  parameters:
+    isbn:
+      name: "isbn"
+      description: "ISBN of the book to get"
+      in: path
+      required: True
+      schema:
+        type: "string"
+paths:
+  /books:
+    get:
+      operationId: "books.read_all"
+      tags:
+        - "Books"
+      summary: "Read the list of books"
+      responses:
+        "200":
+          description: "Successfully read books list"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      operationId: "books.create"
+      tags:
+        - Books
+      summary: "Create a Book"
+      requestBody:
+        description: "Book to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "book"
+              $ref: "#/components/schemas/Book"
+      responses:
+        "201":
+          description: "Successfully created book"
+  /books/{isbn}:
+    get:
+      operationId: "book.read_one"
+      tags:
+        - People
+      summary: "Read one book"
+      parameters:
+        - $ref: "#/components/parameters/isbn"
+      responses:
+        "200":
+          description: "Successfully read book"
+    put:
+      tags:
+        - Books
+      operationId: "books.update"
+      summary: "Update a Book"
+      parameters:
+        - $ref: "#/components/parameters/isbn"
+      responses:
+        "200":
+          description: "Successfully updated book"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "book"
+              $ref: "#/components/schemas/Book"
+    delete:
+      tags:
+        - Books
+      operationId: "books.delete"
+      summary: "Delete a book"
+      parameters:
+        - $ref: "#/components/parameters/isbn"
+      responses:
+        "204":
+          description: "Successfully deleted book"
+  /add_new/{isbn}:
+    get:
+      operationId: "request.isbn_lookup"
+      tags:
+        - "Books"
+      summary: "Lookup book by ISBN and create if not exists"
+      parameters:
+        - $ref: "#/components/parameters/isbn"
+      responses:
+        "302":
+          description: "Redirect to read_all page"
+        "200":
+          description: "Successfully looked up and created book"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"

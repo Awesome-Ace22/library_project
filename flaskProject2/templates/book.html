@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISBN API</title>
+    <style>
+        /* Optional: Add some basic styling for better appearance */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>{{ book.title }}</h2>
+        <h3>{{ book.authors }}</h3>
+    {# <img src="{{ url_for('thumbnail', isbn=isbn) }}" alt="Image"> #}
+    <img src="{{ book.bookdetails["thumbnail"] }}" alt="HTML5 Icon" style="width:121px;height:156px;">
+    <p>{{ book.bookdetails["publishedDate"] }}</p>
+    <!-- Wrap your JSON data inside a <pre> element -->
+    <p>{{ book.bookdetails["description"] }}</p>
+   {# <code>{{ book }}</code>  #}
+    <p><a href="/">Back to the main page</a></p>
+
+</body>
+</html>
