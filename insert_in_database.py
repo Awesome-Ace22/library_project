@@ -1,8 +1,11 @@
 from config import flask_app, db
-from models import Book, BookDetails, books_schema,bookdetails_schema
+from models import Book, books_schema
 from request import isbn_look_up
 #9781529091427
 
+
+
+"""
 def insert_in_database(isbn):
     books = books_schema.dump(Book.query.all())
     results = isbn_look_up(isbn)
@@ -25,3 +28,4 @@ def insert_in_database(isbn):
             new_book.bookdetails = new_book_details
             db.session.add(new_book)
         db.session.commit()
+"""

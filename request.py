@@ -1,8 +1,7 @@
 import urllib.request
 import urllib.parse
 import json
-from books import create
-from bookdetails import create as create_book_details
+
 
 
 def isbn_look_up(isbn):
@@ -18,6 +17,7 @@ def isbn_look_up(isbn):
     data = json.loads(response.read())
     # Checks if 'items' is present in the response
     if 'items' in data:
+        id = data['items'][0]["id"]
         volume_info = data['items'][0]['volumeInfo']
         # Uses get method at each level to handle missing keys
         title = volume_info.get("title", "N/A")
@@ -25,18 +25,21 @@ def isbn_look_up(isbn):
         publisher = volume_info.get("publisher", "N/A")
         published_date = volume_info.get("publishedDate", "N/A")
         description = volume_info.get("description", "N/A")
+        pageCount = volume_info.get("pageCount", "N/A")
         image_links = volume_info.get("imageLinks", {})
         thumbnail = image_links.get("thumbnail", "N/A")
         book_info = [isbn, title, authors, publisher, published_date, description, thumbnail]
 
         # Creates a dictionary with book information
         book_data = {
+            "id": id,
             "isbn": isbn,
             "title": title,
             "authors": authors,
             "publisher": publisher,
             "publishedDate": published_date,
             "description": description,
+            "pageCount": pageCount,
             "thumbnail": thumbnail
         }
         return book_data

@@ -2,7 +2,7 @@
 
 from flask import abort, make_response
 from config import db
-from models import Book, books_schema, book_schema, bookdetails_schema
+from models import Book, books_schema, book_schema
 
 def read_all():
     results = books_schema.dump(Book.query.all())

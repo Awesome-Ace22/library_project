@@ -31,39 +31,48 @@ def create_table(conn, create_table_sql):
         print(e)
 
 
-def main():
-    database = r"/Users/ameliaellis/PycharmProjects/flaskProject2/books.db"
+def create_db():
+    database = r"/Users/ameliaellis/PycharmProjects/library_project/users.db"
 
-    sql_create_books_table = """ CREATE TABLE IF NOT EXISTS projects (
-                                        id integer PRIMARY KEY,
-                                        isbn text NOT NULL,
-                                        title text,
-                                        authors text
+    sql_create_users_table = """CREATE TABLE IF NOT EXISTS user (
+                                        user_id integer PRIMARY KEY,
+                                        username text,
+                                        password text,
+                                    ); """
+    sql_create_libraries_table = """CREATE TABLE IF NOT EXISTS library (
+                                        library_id integer PRIMARY KEY,
+                                        user_id integer NOT NULL,
+                                        library_name text,
+                                        FOREIGN KEY (user_id) REFERENCES user (user_id)
                                     ); """
 
-    sql_create_bookdetails_table = """CREATE TABLE IF NOT EXISTS tasks (
-                                    id integer PRIMARY KEY,
-                                    book_id integer NOT NULL,
-                                    publisher text NOT NULL,
-                                    publishedDate text NOT NULL,
-                                    description text NOT NULL,
-                                    thumbnail text NOT NULL,
-                                    FOREIGN KEY (book_id) REFERENCES books (id)
-                                );"""
+    sql_create_books_table = """ CREATE TABLE IF NOT EXISTS book (
+                                        book_id integer PRIMARY KEY,
+                                        library_id integer,
+                                        isbn text,
+                                        title text,
+                                        authors text
+                                        publisher text NOT NULL,
+                                        publishedDate text NOT NULL,
+                                        description text NOT NULL,
+                                        pageCount integer,
+                                        thumbnail text NOT NULL,
+                                        FOREIGN KEY (library_id) REFERENCES library (library_id)
+                                    ); """
 
     # create a database connection
     conn = create_connection(database)
 
     # create tables
     if conn is not None:
-        # create projects table
+        # create tables
+        create_table(conn, sql_create_users_table)
+        create_table(conn, sql_create_libraries_table)
         create_table(conn, sql_create_books_table)
 
-        # create tasks table
-        create_table(conn, sql_create_bookdetails_table)
     else:
         print("Error! cannot create the database connection.")
 
 
 if __name__ == '__main__':
-    main()
+    create_db()
