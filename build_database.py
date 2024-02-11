@@ -58,7 +58,6 @@ def fill_database():
                     )
                     new_library.books.append(new_book)
                 new_user.libraries.append(new_library)
-            print(new_user)
             db.session.add(new_user)
         db.session.commit()
 

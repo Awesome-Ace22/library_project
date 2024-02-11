@@ -1,8 +1,9 @@
-# book.py
+# books.py
 
 from flask import abort, make_response
 from config import db
-from models import Book, books_schema, book_schema
+from models import User,Library, Book, books_schema, book_schema
+from request import isbn_look_up
 
 def read_all():
     results = books_schema.dump(Book.query.all())
@@ -39,31 +40,20 @@ def sort_info(dict):
     sorted_dict = dict(sorted(dict.items(), key=lambda item: custom_order(item[0])))
     return sorted_dict
 
-
-def create(book_data):
+def create(library_id, book_data):
     isbn = book_data.get("isbn")
     existing_book = Book.query.filter(Book.isbn == isbn).one_or_none()
 
     if existing_book is None:
-        # Create a new Book instance
-        new_book = book_schema.load(book_data, session=db.session)
-        db.session.add(new_book)
-        db.session.commit()
-
-        # Create associated BookDetails
-        book_details_data = {
-            "id": new_book.id,
-            "publisher": book_data.get("publisher"),
-            "publishedDate": book_data.get("publishedDate"),
-            "description": book_data.get("description"),
-            "thumbnail": book_data.get("thumbnail")
-        }
-
-        new_book_details = bookdetails_schema.load(book_details_data, session=db.session)
-        db.session.add(new_book_details)
-        db.session.commit()
-
-        return book_schema.dump(new_book), 201
+        # Find library
+        # library_id = book_data.get("library_id")
+        library = Library.query.get(library_id)
+        if Library:
+            # Create a new Book instance
+            new_book = book_schema.load(book_data, session=db.session)
+            library.books.append(new_book)
+            db.session.commit()
+            return book_schema.dump(new_book), 201
     else:
         abort(
             406,
@@ -71,13 +61,11 @@ def create(book_data):
         )
 
 
-
 def update(isbn, book):
     existing_book = Book.query.filter(Book.isbn == isbn).one_or_none()
 
     if existing_book:
         update_book = book_schema.load(book, session=db.session)
-        existing_book.title = update_book.title
         existing_book.title = update_book.title
         existing_book.authors = update_book.authors
         existing_book.publisher = update_book.publisher

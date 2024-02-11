@@ -6,9 +6,9 @@
         <title>Login form </title>
     </head>
     <body>
-        <p>Login to edit the meteo database: </p>
+        <p>Login to see your library: </p>
         <div class="container">
-            <form action="" class="form-inline" method="post">
+            <form action="/userlogin/" class="form-inline" method="post">
                 <input type="text" class="form-control" placeholder="Username" name="username"
                        value="{{ request.form.username }}">
                 <input type="password" class="form-control" placeholder="Password" name="password"

@@ -99,3 +99,6 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 book_schema = BookSchema()
 books_schema = BookSchema(many=True)
 library_schema = LibrarySchema()
+libraries_schema = LibrarySchema(many=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)

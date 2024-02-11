@@ -4,9 +4,10 @@ from flask import render_template, redirect, url_for, request, send_file
 from request import isbn_look_up
 from config import connex_app, db
 from models import Book, books_schema, book_schema
-from insert_in_database import insert_in_database
-from books import read_all, read_one
+from insert_in_database import insert_book
+from books import read_all, read_one, create
 from images import fetch_image
+from users import check_login
 import logging
 from io import BytesIO
 
@@ -31,8 +32,27 @@ def get_headers(response):
 def home():
     app.logger.info('Processing default request')
     books = Book.query.all()
-    return render_template("home.html", books=books)
+    return render_template("login.html")
+@app.route("/userlogin/", methods=['GET', 'POST'])
+def user_login():
+    error = ''
+    if request.method == "POST":
+        attempted_username = request.form['username']
+        attempted_password = request.form['password']
+        login_attempt = check_login(attempted_username,attempted_password)
+        if login_attempt:
+            return redirect(url_for('user_library'))
+        else:
+            print('invalid credentials')
+            error = 'Invalid credentials. Please, try again.'
+    return render_template('login.html', error=error)
 
+@app.route("/userlibrary/", methods=['GET', 'POST'])
+def user_library():
+    app.logger.info('Processing default request')
+    books = Book.query.all()
+    list = [1,2,3,4,5,6,7,8,9,10]
+    return render_template("library.html", books=books,list=list)
 
 @app.route("/read_books", methods=['GET'])
 def read_books():
@@ -53,14 +73,10 @@ def read_book(isbn):
 def add_new(isbn):
     if request.method == "POST":
         isbn = request.form['isbn']
-        insert_in_database(isbn)
-        return redirect(url_for('/read_book/<isbn>', isbn=isbn))
-
-    else:
-        # results = isbn_look_up(isbn)
-        # json_data = json.dumps(results, indent=4, sort_keys=True)
-        insert_in_database(isbn)
-        return redirect(url_for('/read_book/<isbn>', isbn=isbn))
+        #book_data = isbn_look_up(isbn)
+        insert_book(isbn)
+        #create(1, book_data)
+        return redirect(url_for('read_book', isbn=isbn)) #f'/read_book/{isbn}'
 
 @app.route('/image<isbn>.png')
 def thumbnail(isbn):
@@ -76,6 +92,7 @@ def thumbnail(isbn):
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
+
 
 
 

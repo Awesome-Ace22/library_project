@@ -22,12 +22,12 @@
     <h2>{{ book.title }}</h2>
         <h3>{{ book.authors }}</h3>
     {# <img src="{{ url_for('thumbnail', isbn=isbn) }}" alt="Image"> #}
-    <img src="{{ book.bookdetails["thumbnail"] }}" alt="HTML5 Icon" style="width:121px;height:156px;">
-    <p>{{ book.bookdetails["publishedDate"] }}</p>
+    <img src="{{ book.thumbnail }}" alt="HTML5 Icon" style="width:121px;height:156px;">
+    <p>{{ book.publishedDate}}</p>
     <!-- Wrap your JSON data inside a <pre> element -->
-    <p>{{ book.bookdetails["description"] }}</p>
+    <p>{{ book.description }}</p>
    {# <code>{{ book }}</code>  #}
-    <p><a href="/flaskProject2/static">Back to the main page</a></p>
+    <p><a href="/">Back to the main page</a></p>
 
 </body>
 </html>
