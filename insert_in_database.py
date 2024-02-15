@@ -2,8 +2,9 @@ from config import flask_app, db
 from models import User, user_schema, users_schema, Library, library_schema, Book,book_schema, books_schema
 from request import isbn_look_up
 #9781529091427
+with flask_app.app_context():
+    books = books_schema.dump(Book.query.all())
 
-books = books_schema.dump(Book.query.all())
 USER_DATA = [
     {
         "username": "test_username",
