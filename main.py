@@ -1,4 +1,8 @@
 # Version 1.0
+# i installed brew,node, etc for https://reactnative.dev/docs/environment-setup?package-manager=npm
+# Warning: The post-install step did not complete successfully
+# You can try again using:
+# brew postinstall node
 
 from flask import render_template, redirect, url_for, request, send_file
 from request import isbn_look_up
