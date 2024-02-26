@@ -11,7 +11,7 @@ from models import Book, books_schema, book_schema
 from insert_in_database import insert_book
 from books import read_all, read_one, create
 from images import fetch_image
-from users import check_login
+from users import check_login, read_all_users, read_user
 import logging
 from io import BytesIO
 
@@ -36,7 +36,9 @@ def get_headers(response):
 def home():
     app.logger.info('Processing default request')
     books = Book.query.all()
-    return render_template("login.html")
+    return render_template("home.html")
+
+
 @app.route("/userlogin/", methods=['GET', 'POST'])
 def user_login():
     error = ''
@@ -45,22 +47,31 @@ def user_login():
         attempted_password = request.form['password']
         login_attempt = check_login(attempted_username,attempted_password)
         if login_attempt:
-            return redirect(url_for('user_library'))
+            return redirect(url_for('user_library', username=attempted_username))
         else:
             print('invalid credentials')
             error = 'Invalid credentials. Please, try again.'
-    return render_template('login.html', error=error)
+    return render_template('home.html', error=error)
 
-@app.route("/userlibrary/", methods=['GET', 'POST'])
-def user_library():
-    app.logger.info('Processing default request')
-    books = Book.query.all()
+@app.route("/allusers", methods=['GET', 'POST'])
+def all_users():
+    users = read_all_users()
+    return users
+
+@app.route("/userlibrary/<username>", methods=['GET', 'POST'])
+def user_library(username):
+    if request.method == "POST":
+        username = request.form['username']
+    user = read_user(username)
+    books = user["libraries"][0]["books"]
     list = [1,2,3,4,5,6,7,8,9,10]
-    return render_template("library.html", books=books,list=list)
+    return render_template("library.html", books=books)
 
 @app.route("/read_books", methods=['GET'])
 def read_books():
-    books = read_all()
+    username = "test_username"
+    user = read_user(username)
+    books = user["libraries"][0]["books"]
     return books
 
 
@@ -71,7 +82,7 @@ def read_book(isbn):
 
     book_data = book_schema.dump(Book.query.filter(Book.isbn == isbn).one_or_none())
     #book = (f'{book_data}') #sort_info(book_data)
-    return render_template("book.html", book=book_data)
+    return render_template("book_info.html", book=book_data)
 
 @app.route('/add_new/<isbn>', methods=['GET', 'POST'])
 def add_new(isbn):

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="book-info-container">
+    <h2>{{ book.title }}</h2>
+    <h3>{{ book.authors }}</h3>
+    <img src="{{ book.thumbnail }}" alt="{{ book.title }} Cover">
+    <p>Published Date: {{ book.publishedDate }}</p>
+    <p>{{ book.description }}</p>
+    <p><a href="/userlibrary/test_username">Back to your library</a></p>
+</div>
+{% endblock %}

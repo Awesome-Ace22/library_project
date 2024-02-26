@@ -2,7 +2,7 @@
 
 from flask import abort, make_response
 from config import db
-from models import User,Library, Book, books_schema, book_schema
+from models import User, Library, Book, books_schema, book_schema
 from request import isbn_look_up
 
 def read_all():
@@ -13,7 +13,7 @@ def read_all():
         for field, data in book.items():
             orderedbook.append((field, data))
         books.append(orderedbook)
-    return books
+    return results
 
 
 def read_one(isbn):

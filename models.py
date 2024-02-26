@@ -71,7 +71,7 @@ class LibrarySchema(ma.SQLAlchemyAutoSchema):
 
     user_id = fields.Int(dump_only=True)
     library_name = fields.String()
-    books = fields.Nested(BookSchema, many=True)
+    books = fields.Nested(BookSchema(many=True))
 
 
 class User(db.Model):
@@ -94,7 +94,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         include_relationships = True
-    libraries = fields.Nested(LibrarySchema)
+    libraries = fields.Nested(LibrarySchema(many=True))
 
 book_schema = BookSchema()
 books_schema = BookSchema(many=True)

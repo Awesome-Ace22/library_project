@@ -1,24 +1,16 @@
-<!-- templates/home.html -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Flask REST API</title>
-</head>
-<body>
-    <h2> Welcome to your Library </h2>
-    <h3> See Book </h3>
-    <form action="/read_book/<isbn>" method="post">
-      <label for="isbn">ISBN:</label>
-      <input type="text" id="isbn" name="isbn"><br><br>
-      <input type="submit" value="Submit">
-    </form>
-    <h3> Add Book </h3>
-     <form action="/add_new/<isbn>" method="post">
-      <label for="isbn">ISBN:</label>
-      <input type="text" id="isbn" name="isbn"><br><br>
-      <input type="submit" value="Submit">
-    </form>
-</body>
-</html>
+{% block content %}
+<div class="home-container">
+    <h2>Welcome to the Library App</h2>
+    <div class="login-form">
+        <h3>Login to see your library:</h3>
+        <form action="/userlogin/" method="post">
+            <input type="text" placeholder="Username" name="username" value="{{ request.form.username }}">
+            <input type="password" placeholder="Password" name="password" value="{{ request.form.password }}">
+            <input type="submit" value="Login">
+        </form>
+        <p>{{ error }}</p>
+    </div>
+</div>
+{% endblock %}

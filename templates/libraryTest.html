@@ -1,0 +1,94 @@
+<!-- templates/home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask REST API</title>
+    <style>
+        .flex-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          background-color: #bdbdbd;
+        }
+
+        .flex-item {
+          background-color: #e16060;
+          width: 100px;
+          margin: 10px;
+          text-align: center;
+          padding: 20px;
+          font-size: 30px;
+        }
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          font-family: Arial;
+        }
+
+        .header {
+          text-align: center;
+          padding: 32px;
+        }
+
+        .row {
+          display: flex;
+          flex-wrap: wrap;
+          padding: 0 4px;
+        }
+
+        /* Create four equal columns that sits next to each other */
+        .column {
+          flex: 25%;
+          max-width: 25%;
+          padding: 0 4px;
+        }
+
+        .column img {
+          margin-top: 8px;
+          vertical-align: middle;
+        }
+
+        /* Responsive layout - makes a two column-layout instead of four columns */
+        @media (max-width: 800px) {
+          .column {
+            flex: 50%;
+            max-width: 50%;
+          }
+        }
+
+        /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+        @media (max-width: 600px) {
+          .column {
+            flex: 100%;
+            max-width: 100%;
+          }
+        }
+    </style>
+</head>
+<body>
+
+    <h2> Welcome to your Library </h2>
+    <h3> See Book </h3>
+    <form action="/read_book/<isbn>" method="post">
+      <label for="isbn">ISBN:</label>
+      <input type="text" id="isbn" name="isbn"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    <h3> Add Book </h3>
+     <form action="/add_new/<isbn>" method="post">
+      <label for="isbn">ISBN:</label>
+      <input type="text" id="isbn" name="isbn"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    <ul class="flex-container">
+        {% for num in list %}
+            <div class="flex-item">{{ num }}</div>
+        {% endfor %}
+    </ul>
+</body>
+</html>

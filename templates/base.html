@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Personal Library- {% block title %}{% endblock title %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="icon" type="image/x-icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles2.css') }}">
 </head>
 <body>
-<h1>Personal Library</h1>
-<section>
-  <header>
-    {% block header %}{% endblock header %}
-  </header>
-  <main>
-    {% block content %}<p>No messages.</p>{% endblock content %}
-  </main>
-</section>
+    <header>
+        <div class="container">
+            <h1><a href="/">Library App</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/userlibrary/">Library</a></li>
+                    <li><a href="/read_books">All Books</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>
