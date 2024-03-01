@@ -21,7 +21,7 @@ class Book(db.Model):
     __table_args__ = {'keep_existing': True}
     book_id = db.Column(db.Integer, primary_key=True)
     library_id = db.Column(db.Integer, db.ForeignKey("library.library_id"))
-    isbn = db.Column(db.String(32), unique=True)
+    isbn = db.Column(db.String(32)) #unique=True
     title = db.Column(db.String(32))
     authors = db.Column(db.String(255))
     publisher = db.Column(db.String(255))

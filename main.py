@@ -3,15 +3,16 @@
 # Warning: The post-install step did not complete successfully
 # You can try again using:
 # brew postinstall node
-
-from flask import render_template, redirect, url_for, request, send_file
+# exurbia adress https://m.media-amazon.com/images/I/61OPJ7+h5bL._AC_UF1000,1000_QL80_.jpg
+# Access denied: chrome://net-internals/#sockets --> Flush Socket Pools
+from flask import render_template,session, redirect, url_for, request, send_file
 from request import isbn_look_up
 from config import connex_app, db
 from models import Book, books_schema, book_schema
 from insert_in_database import insert_book
 from books import read_all, read_one, create
 from images import fetch_image
-from users import check_login, read_all_users, read_user
+from users import check_login, create_user, read_all_users, read_user
 import logging
 from io import BytesIO
 
@@ -22,6 +23,11 @@ connex_app.add_api("swagger.yml")
 app = connex_app.app
 
 logging.basicConfig(level=logging.DEBUG)
+
+# Details on the Secret Key: https://flask.palletsprojects.com/en/2.3.x/config/#SECRET_KEY
+# NOTE: The secret key is used to cryptographically-sign the cookies used for storing the session data.
+app.secret_key = 'BAD_SECRET_KEY'
+
 
 
 def get_headers(response):
@@ -47,12 +53,33 @@ def user_login():
         attempted_password = request.form['password']
         login_attempt = check_login(attempted_username,attempted_password)
         if login_attempt:
+            session['username'] = attempted_username
+
             return redirect(url_for('user_library', username=attempted_username))
         else:
             print('invalid credentials')
             error = 'Invalid credentials. Please, try again.'
     return render_template('home.html', error=error)
 
+@app.route("/logout", methods=['GET', 'POST'])
+def user_logout():
+    session.pop('username', default=None)
+    return render_template('home.html')
+@app.route("/signupuser/", methods=['GET', 'POST'])
+def sign_up_user():
+    error = ''
+    if request.method == "POST":
+        new_username = request.form['username']
+        new_password = request.form['password']
+        sign_up_attempt = create_user(new_username,new_password)
+        if sign_up_attempt:
+            error = "success"
+            return render_template('home.html', error=error)
+            # return redirect(url_for('user_library', username=new_username))
+        else:
+            print('Invalid Username')
+            error = f"User with Username: {new_username} already exists. Please, try again"
+    return render_template('home.html', error=error)
 @app.route("/allusers", methods=['GET', 'POST'])
 def all_users():
     users = read_all_users()
@@ -63,6 +90,7 @@ def user_library(username):
     if request.method == "POST":
         username = request.form['username']
     user = read_user(username)
+    session['library_id'] = user["libraries"][0]["library_id"]
     books = user["libraries"][0]["books"]
     list = [1,2,3,4,5,6,7,8,9,10]
     return render_template("library.html", books=books)
@@ -79,19 +107,17 @@ def read_books():
 def read_book(isbn):
     if request.method == "POST":
         isbn = request.form['isbn']
-
-    book_data = book_schema.dump(Book.query.filter(Book.isbn == isbn).one_or_none())
-    #book = (f'{book_data}') #sort_info(book_data)
-    return render_template("book_info.html", book=book_data)
+    library_id = session['library_id']
+    book = read_one(isbn,library_id)
+    return render_template("book_info.html", book=book)
 
 @app.route('/add_new/<isbn>', methods=['GET', 'POST'])
 def add_new(isbn):
     if request.method == "POST":
         isbn = request.form['isbn']
-        #book_data = isbn_look_up(isbn)
-        insert_book(isbn)
-        #create(1, book_data)
-        return redirect(url_for('read_book', isbn=isbn)) #f'/read_book/{isbn}'
+        username = session['username']
+        insert_book(isbn,username)
+        return redirect(url_for('read_book', isbn=isbn))
 
 @app.route('/image<isbn>.png')
 def thumbnail(isbn):

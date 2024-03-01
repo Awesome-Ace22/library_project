@@ -16,8 +16,8 @@ def read_all():
     return results
 
 
-def read_one(isbn):
-    result = Book.query.filter(Book.isbn == isbn).one_or_none()
+def read_one(isbn,library_id):
+    result = Book.query.filter(Book.library_id == library_id, Book.isbn == isbn).one_or_none()
 
     if result is not None:
         book = book_schema.dump(result)
@@ -83,7 +83,7 @@ def update(isbn, book):
         )
 
 
-def delete(isbn):
+def delete(isbn,library_id):
     existing_book = Book.query.filter(Book.isbn == isbn).one_or_none()
     if existing_book:
         db.session.delete(existing_book)

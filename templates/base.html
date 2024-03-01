@@ -5,23 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <link rel="icon" type="image/x-icon" href="/assets/icon.png">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles2.css') }}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <body>
+    <!-- Navbar -->
     <header>
-        <div class="container">
-            <h1><a href="/">Library App</a></h1>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/userlibrary/">Library</a></li>
-                    <li><a href="/read_books">All Books</a></li>
-                </ul>
-            </nav>
+        <div class="w3-container">
+            <div class="w3-bar w3-border w3-card-4 w3-light-grey">
+                <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right"
+                href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+                <a href="/" class="w3-bar-item w3-button"><i class="fa fa-home"></i>Home</a>
+                {% if session['username'] %}
+                    <a href="/userlibrary/{{ session['username'] }}" class="w3-bar-item w3-button">Library</a>
+                {% else %}
+                    <a href="/" class="w3-bar-item w3-button">Library</a>
+                {% endif %}
+
+                <a href="/read_books" class="w3-bar-item w3-button">All Books</a>
+                <a href="/allusers" class="w3-bar-item w3-button">Users</a>
+                {% if session['username'] %}
+                    <a href="/logout" class="w3-bar-item w3-button  w3-green w3-center w3-display-topright">Logout</a>
+                {% endif %}
+            </div>
+
+            <!-- Navbar on small screens -->
+            <div id="navDemo" class="w3-bar-block w3-hide w3-hide-large w3-hide-medium ">
+                <a href="/" class="w3-bar-item w3-button"><i class="fa fa-home"></i>Home</a>
+                {% if session['username'] %}
+                    <a href="/userlibrary/{{ session['username'] }}" class="w3-bar-item w3-button">Library</a>
+                {% else %}
+                    <a href="/" class="w3-bar-item w3-button">Library</a>
+                {% endif %}
+                <a href="/read_books" class="w3-bar-item w3-button">All Books</a>
+                <a href="/allusers" class="w3-bar-item w3-button">Users</a>
+                {% if session['username'] %}
+                    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+                {% endif %}
+            </div>
         </div>
+
     </header>
     <main>
-        {% block content %}{% endblock %}
+        <div class="w3-container w3-center" >
+            {% block content %}{% endblock %}
+        </div>
     </main>
+
+    <script>
+    // Used to toggle the menu on small screens when clicking on the menu button
+    function myFunction() {
+      var x = document.getElementById("navDemo");
+      if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+      } else {
+        x.className = x.className.replace(" w3-show", "");
+      }
+    }
+    </script>
 </body>
 </html>

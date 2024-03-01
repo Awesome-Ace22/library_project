@@ -4,7 +4,7 @@ import urllib.parse
 import json
 from flask import jsonify
 from config import flask_app, db
-from models import User, Library, Book
+from models import User, user_schema, users_schema, Library, library_schema, Book,book_schema, books_schema
 from request import isbn_look_up
 from set_up_database import reset_database
 from create_database import create_db
@@ -32,8 +32,6 @@ USER_DATA = [
         }]
     }
 ]
-
-
 
 
 def fill_database():
@@ -66,6 +64,7 @@ if __name__ == '__main__':
     reset_database()
     create_db()
     fill_database()
+    print("success")
 
 
 

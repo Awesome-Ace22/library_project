@@ -1,26 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="library-container">
-    <div class="search-bar">
-        <form action="/read_book/<isbn>" method="post">
-            <label for="isbn">Search by ISBN:</label>
-            <input type="text" id="isbn" name="isbn">
-            <input type="submit" value="Search">
-        </form>
+    <div class="library-container">
+        <div class="w3-container w3-padding">
+            <div class="w3-row-padding w3-padding">
+                <div class="w3-half">
+                    <form class="w3-container" action="/read_book/<isbn>" method="post" >
+                        <label for="isbn">Search by ISBN:</label>
+                        <div class="w3-row">
+                            <input class="w3-input w3-border w3-threequarter" type="text" id="isbn" name="isbn">
+                            <input class="w3-input w3-quarter" type="submit" value="Search">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="w3-half">
+                    <form class="w3-container" action="/add_new/<isbn>" method="post" >
+                        <label for="isbn">Add Book by ISBN:</label>
+                        <div class="w3-row">
+                            <input class="w3-input w3-border w3-threequarter" type="text" id="isbn" name="isbn">
+                            <input class="w3-input w3-quarter" type="submit" value="Add">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="w3-container w3-padding">
+            <div class="w3-row-padding">
+            {% for book in books %}
+                <div class="w3-container w3-quarter">
+                    <div class="w3-card w3-hover-shadow">
+                        <a href="{{ url_for('read_book', isbn=book.isbn) }}">
+                            <img
+                                src="{{ book.thumbnail }}"
+                                onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbJk-qCpmshndFRatcLSOB8GsyboaySnGpeS2GvkZsQShaZpccKqkkK4MkBRGbIVOBnzw&usqp=CAU'"
+                                style="width:100%;max-width:400px">
+                        </a>
+                    <footer class="w3-container">
+                          <h5 onclick="onClick(this)" class="w3-hover-opacity">{{ book.title }}</h5>
+                    </footer>
+                    </div>
+                </div>
+            {% endfor %}
+            <img src="../assets/not_available_thumbnail.jpeg">
+            </div>
+        </div>
     </div>
-    <div class="image-grid">
-        {% for book in books %}
-            <a href="{{ url_for('read_book', isbn=book.isbn) }}">
-                <img
-                        src="{{ book.thumbnail }}"
-                        onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbJk-qCpmshndFRatcLSOB8GsyboaySnGpeS2GvkZsQShaZpccKqkkK4MkBRGbIVOBnzw&usqp=CAU'"
-                >
-            </a>
-        {% endfor %}
-        <img src="../assets/not_available_thumbnail.jpeg">
+
+    <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+      <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+      <div class="w3-modal-content w3-animate-zoom">
+          <p> hello text </p>
+      </div>
     </div>
-</div>
+
+    <script>
+    function onClick(element) {
+      <!-- document.getElementById("img01").src = element.src; -->
+      document.getElementById("modal01").style.display = "block";
+    }
+    </script>
 {% endblock %}
 
-<!-- <img src="{{ book.thumbnail }}" alt="{{ book.title }}"/> -->
+<!-- <img src="{{ book.thumbnail }}" alt="{{ book.title }}"/>
+
+
+href="{{ url_for('read_book', isbn=book.isbn) }}"
+<a href="{{ url_for('read_book', isbn=book.isbn) }}" target="iframe_a">
+
+<iframe src="demo_iframe.htm" name="iframe_a" height="200" width="300" title="Iframe Example"></iframe>
+
+
+-->
