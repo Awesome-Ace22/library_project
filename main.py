@@ -5,6 +5,7 @@
 # brew postinstall node
 # exurbia adress https://m.media-amazon.com/images/I/61OPJ7+h5bL._AC_UF1000,1000_QL80_.jpg
 # Access denied: chrome://net-internals/#sockets --> Flush Socket Pools
+
 from flask import render_template,session, redirect, url_for, request, send_file
 from request import isbn_look_up
 from config import connex_app, db
@@ -14,6 +15,8 @@ from books import read_all, read_one, create
 from images import fetch_image
 from users import check_login, create_user, read_all_users, read_user
 import logging
+import functools
+
 from io import BytesIO
 
 # Add the API definition
@@ -35,6 +38,14 @@ def get_headers(response):
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
 
+def login_required(func):
+    """Make sure user is logged in before proceeding"""
+    @functools.wraps(func)
+    def wrapper_login_required(*args, **kwargs):
+        if session['username'] is None:
+            return redirect(url_for("home"))
+        return func(*args, **kwargs)
+    return wrapper_login_required
 
 
 # Define the route
@@ -54,7 +65,6 @@ def user_login():
         login_attempt = check_login(attempted_username,attempted_password)
         if login_attempt:
             session['username'] = attempted_username
-
             return redirect(url_for('user_library', username=attempted_username))
         else:
             print('invalid credentials')
@@ -65,6 +75,8 @@ def user_login():
 def user_logout():
     session.pop('username', default=None)
     return render_template('home.html')
+
+
 @app.route("/signupuser/", methods=['GET', 'POST'])
 def sign_up_user():
     error = ''
@@ -74,7 +86,8 @@ def sign_up_user():
         sign_up_attempt = create_user(new_username,new_password)
         if sign_up_attempt:
             error = "success"
-            return render_template('home.html', error=error)
+            session['username'] = new_username
+            return render_template('user_library', username=new_username)
             # return redirect(url_for('user_library', username=new_username))
         else:
             print('Invalid Username')
@@ -85,15 +98,20 @@ def all_users():
     users = read_all_users()
     return users
 
+
 @app.route("/userlibrary/<username>", methods=['GET', 'POST'])
+@login_required
 def user_library(username):
+    error = ''
     if request.method == "POST":
         username = request.form['username']
-    user = read_user(username)
-    session['library_id'] = user["libraries"][0]["library_id"]
-    books = user["libraries"][0]["books"]
-    list = [1,2,3,4,5,6,7,8,9,10]
-    return render_template("library.html", books=books)
+    if username == session['username']:
+        user = read_user(username)
+        session['library_id'] = user["libraries"][0]["library_id"]
+        books = user["libraries"][0]["books"]
+        list = [1,2,3,4,5,6,7,8,9,10]
+        return render_template("library.html", books=books)
+    else: render_template('home.html',error=error)
 
 @app.route("/read_books", methods=['GET'])
 def read_books():
@@ -104,6 +122,7 @@ def read_books():
 
 
 @app.route("/read_book/<isbn>", methods=['GET','POST'])
+@login_required
 def read_book(isbn):
     if request.method == "POST":
         isbn = request.form['isbn']
@@ -133,6 +152,7 @@ def thumbnail(isbn):
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
+
 
 
 
